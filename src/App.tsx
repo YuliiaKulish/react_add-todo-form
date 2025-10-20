@@ -28,8 +28,8 @@ export const App: React.FC = () => {
   const [titleError, setTitleError] = useState<boolean>(false);
   const [userError, setUserError] = useState<boolean>(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
     let hasError = false;
 
@@ -55,8 +55,11 @@ export const App: React.FC = () => {
       return;
     }
 
+    const nextId =
+      todos.length > 0 ? Math.max(...todos.map(todo => todo.id)) + 1 : 1;
+
     const newTodo: Todo = {
-      id: Math.max(...todos.map(todo => todo.id)) + 1,
+      id: nextId,
       title: title.trim(),
       userId: selectedUserId,
       completed: false,
@@ -74,15 +77,15 @@ export const App: React.FC = () => {
 
       <form action="/api/todos" method="POST" onSubmit={handleSubmit}>
         <div className="field">
+          <label htmlFor="title">Title</label>
           <input
+            id="title"
             type="text"
             data-cy="titleInput"
             value={title}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setTitle(e.target.value);
-              if (titleError && e.target.value.trim() !== '') {
-                setTitleError(false);
-              }
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setTitle(event.target.value);
+              setTitleError(false);
             }}
             placeholder="Enter title"
           />
@@ -94,16 +97,16 @@ export const App: React.FC = () => {
         </div>
 
         <div className="field">
+          <label htmlFor="user">User</label>
           <select
+            id="user"
             data-cy="userSelect"
             value={selectedUserId}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-              const newId = Number(e.target.value);
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+              const newId = Number(event.target.value);
 
               setSelectedUserId(newId);
-              if (userError && newId !== 0) {
-                setUserError(false);
-              }
+              setUserError(false);
             }}
           >
             <option value="0" disabled>
