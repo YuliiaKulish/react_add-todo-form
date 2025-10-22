@@ -3,45 +3,44 @@ import './App.scss';
 
 import usersFromServer from './api/users';
 import todosFromServer from './api/todos';
-import Todo from './type/Todo';
 import { TodoList } from './components/TodoList';
+import { Todo } from './type/todo';
+import { TitleField } from './components/TitleField/TitleField';
+import { UserField } from './components/UserField/UserField';
 
 const initialTodos: Todo[] = todosFromServer
   .map(todo => {
     const user = usersFromServer.find(u => todo.userId === u.id);
 
-    if (!user) {
-      return null;
-    }
-
-    return {
-      ...todo,
-      user,
-    };
+    return user ? { ...todo, user } : null;
   })
   .filter((todo): todo is Todo => todo !== null);
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
-  const [selectedUserId, setSelectedUserId] = useState<number>(0);
   const [title, setTitle] = useState<string>('');
-  const [titleError, setTitleError] = useState<boolean>(false);
-  const [userError, setUserError] = useState<boolean>(false);
+  const [selectedUserId, setSelectedUserId] = useState<number>(0);
+  const [errors, setErrors] = useState({
+    user: '',
+    title: '',
+  });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    const newErrors = { title: '', user: '' };
     let hasError = false;
 
     if (title.trim() === '') {
-      setTitleError(true);
+      newErrors.title = 'Please enter a title';
       hasError = true;
     }
 
     if (selectedUserId === 0) {
-      setUserError(true);
+      newErrors.user = 'Please choose a user';
       hasError = true;
     }
+
+    setErrors(newErrors);
 
     if (hasError) {
       return;
@@ -50,7 +49,7 @@ export const App: React.FC = () => {
     const user = usersFromServer.find(u => u.id === selectedUserId);
 
     if (!user) {
-      setUserError(true);
+      setErrors(prev => ({ ...prev, user: 'Please choose a user' }));
 
       return;
     }
@@ -69,6 +68,7 @@ export const App: React.FC = () => {
     setTodos([...todos, newTodo]);
     setTitle('');
     setSelectedUserId(0);
+    setErrors({ title: '', user: '' });
   };
 
   return (
@@ -76,56 +76,19 @@ export const App: React.FC = () => {
       <h1>Add todo form</h1>
 
       <form action="/api/todos" method="POST" onSubmit={handleSubmit}>
-        <div className="field">
-          <label htmlFor="title">Title</label>
-          <input
-            id="title"
-            type="text"
-            data-cy="titleInput"
-            value={title}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setTitle(event.target.value);
-              setTitleError(false);
-            }}
-            placeholder="Enter title"
-          />
-          {titleError && (
-            <span className="error" data-cy="titleError">
-              Please enter a title
-            </span>
-          )}
-        </div>
-
-        <div className="field">
-          <label htmlFor="user">User</label>
-          <select
-            id="user"
-            data-cy="userSelect"
-            value={selectedUserId}
-            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-              const newId = Number(event.target.value);
-
-              setSelectedUserId(newId);
-              setUserError(false);
-            }}
-          >
-            <option value="0" disabled>
-              Choose a user
-            </option>
-            {usersFromServer.map(user => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-
-          {userError && (
-            <span className="error" data-cy="userError">
-              Please choose a user
-            </span>
-          )}
-        </div>
-
+        <TitleField
+          setTitle={setTitle}
+          setErrors={setErrors}
+          title={title}
+          errors={errors}
+        />
+        <UserField
+          setSelectedUserId={setSelectedUserId}
+          setErrors={setErrors}
+          selectedUserId={selectedUserId}
+          errors={errors}
+          users={usersFromServer}
+        />
         <button type="submit" data-cy="submitButton">
           Add
         </button>

@@ -1,6 +1,6 @@
-import User from './User';
+import { User } from './user';
 
-export default interface Todo {
+export interface Todo {
   id: number;
   title: string;
   userId: number;

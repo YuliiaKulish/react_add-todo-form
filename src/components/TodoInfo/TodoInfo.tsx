@@ -1,6 +1,7 @@
 import React from 'react';
-import Todo from '../../type/Todo';
+import { Todo } from '../../type/todo';
 import { UserInfo } from '../UserInfo';
+import classNames from 'classnames';
 interface Props {
   todo: Todo;
 }
@@ -8,7 +9,9 @@ interface Props {
 export const TodoInfo: React.FC<Props> = ({ todo }) => (
   <article
     data-id={todo.id}
-    className={`TodoInfo${todo.completed ? ' TodoInfo--completed' : ''}`}
+    className={classNames('TodoInfo', {
+      ' TodoInfo--completed': todo.completed,
+    })}
   >
     <h2 className="TodoInfo__title">{todo.title}</h2>
     <UserInfo user={todo.user} />
