@@ -1,12 +1,12 @@
-import React from 'react';
-import { Todo } from '../../type/todo';
+import { FC } from 'react';
 import { UserInfo } from '../UserInfo';
 import classNames from 'classnames';
+import { Todo } from '../../types/todo';
 interface Props {
   todo: Todo;
 }
 
-export const TodoInfo: React.FC<Props> = ({ todo }) => (
+export const TodoInfo: FC<Props> = ({ todo }) => (
   <article
     data-id={todo.id}
     className={classNames('TodoInfo', {

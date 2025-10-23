@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import './App.scss';
 
 import usersFromServer from './api/users';
 import todosFromServer from './api/todos';
 import { TodoList } from './components/TodoList';
-import { Todo } from './type/todo';
 import { TitleField } from './components/TitleField/TitleField';
 import { UserField } from './components/UserField/UserField';
+import { Todo } from './types/todo';
 
 const initialTodos: Todo[] = todosFromServer
   .map(todo => {
@@ -16,7 +16,7 @@ const initialTodos: Todo[] = todosFromServer
   })
   .filter((todo): todo is Todo => todo !== null);
 
-export const App: React.FC = () => {
+export const App: FC = () => {
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const [title, setTitle] = useState<string>('');
   const [selectedUserId, setSelectedUserId] = useState<number>(0);
@@ -25,7 +25,7 @@ export const App: React.FC = () => {
     title: '',
   });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const newErrors = { title: '', user: '' };
     let hasError = false;

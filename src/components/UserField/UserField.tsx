@@ -1,5 +1,5 @@
 import { ChangeEvent, Dispatch, FC, SetStateAction } from 'react';
-import { User } from '../../type/user';
+import { User } from '../../types/user';
 
 interface Props {
   setSelectedUserId: Dispatch<SetStateAction<number>>;
