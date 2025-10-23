@@ -7,6 +7,7 @@ import { TodoList } from './components/TodoList';
 import { TitleField } from './components/TitleField/TitleField';
 import { UserField } from './components/UserField/UserField';
 import { Todo } from './types/todo';
+import { FormErrors } from './types/formErrors';
 
 const initialTodos: Todo[] = todosFromServer
   .map(todo => {
@@ -20,14 +21,26 @@ export const App: FC = () => {
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const [title, setTitle] = useState<string>('');
   const [selectedUserId, setSelectedUserId] = useState<number>(0);
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<FormErrors>({
     user: '',
     title: '',
   });
 
+  const handleErrorsChange = (payload: FormErrors) => {
+    setErrors(payload);
+  };
+
+  const handleUserChange = (userId: number) => {
+    setSelectedUserId(userId);
+  };
+
+  const handleTitleChange = (newTitle: string) => {
+    setTitle(newTitle);
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const newErrors = { title: '', user: '' };
+    const newErrors: FormErrors = { user: '', title: '' };
     let hasError = false;
 
     if (title.trim() === '') {
@@ -77,14 +90,14 @@ export const App: FC = () => {
 
       <form action="/api/todos" method="POST" onSubmit={handleSubmit}>
         <TitleField
-          setTitle={setTitle}
-          setErrors={setErrors}
+          onTitleChange={handleTitleChange}
+          onErrorsChange={handleErrorsChange}
           title={title}
           errors={errors}
         />
         <UserField
-          setSelectedUserId={setSelectedUserId}
-          setErrors={setErrors}
+          onUserChange={handleUserChange}
+          onErrorsChange={handleErrorsChange}
           selectedUserId={selectedUserId}
           errors={errors}
           users={usersFromServer}

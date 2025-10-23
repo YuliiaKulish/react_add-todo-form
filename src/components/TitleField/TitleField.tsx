@@ -1,24 +1,22 @@
-import { ChangeEvent, Dispatch, FC, SetStateAction } from 'react';
+import { ChangeEvent, FC } from 'react';
+import { FormErrors } from '../../types/formErrors';
 
 interface Props {
-  setTitle: (title: string) => void;
-  setErrors: Dispatch<SetStateAction<{ user: string; title: string }>>;
+  onTitleChange: (newTitle: string) => void;
+  onErrorsChange: (payload: FormErrors) => void;
   title: string;
-  errors: {
-    user: string;
-    title: string;
-  };
+  errors: FormErrors;
 }
 
 export const TitleField: FC<Props> = ({
-  setTitle,
-  setErrors,
+  onTitleChange,
+  onErrorsChange,
   title,
   errors,
 }) => {
   const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
-    setErrors(prev => ({ ...prev, title: '' }));
+    onTitleChange(event.target.value);
+    onErrorsChange({ ...errors, title: '' });
   };
 
   return (

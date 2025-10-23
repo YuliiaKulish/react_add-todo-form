@@ -1,27 +1,25 @@
-import { ChangeEvent, Dispatch, FC, SetStateAction } from 'react';
+import { ChangeEvent, FC } from 'react';
 import { User } from '../../types/user';
+import { FormErrors } from '../../types/formErrors';
 
 interface Props {
-  setSelectedUserId: Dispatch<SetStateAction<number>>;
-  setErrors: Dispatch<SetStateAction<{ user: string; title: string }>>;
+  onUserChange: (userId: number) => void;
+  onErrorsChange: (payload: FormErrors) => void;
   selectedUserId: number;
-  errors: {
-    user: string;
-    title: string;
-  };
+  errors: FormErrors;
   users: User[];
 }
 
 export const UserField: FC<Props> = ({
-  setSelectedUserId,
-  setErrors,
+  onUserChange,
+  onErrorsChange,
   selectedUserId,
   errors,
   users,
 }) => {
   const handleSelectedChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    setSelectedUserId(Number(event.target.value));
-    setErrors(prev => ({ ...prev, user: '' }));
+    onUserChange(Number(event.target.value));
+    onErrorsChange({ ...errors, user: '' });
   };
 
   return (
